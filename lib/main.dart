@@ -1,23 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:swipemovie/test.dart';
-// import 'package:swipemovie/home.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:swipemovie/app.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Supabase.initialize(
+    url: "https://zgkjyvdakcikbyqrnbjt.supabase.co",
+    anonKey:
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inpna2p5dmRha2Npa2J5cXJuYmp0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTc3NzAzNjEsImV4cCI6MjA3MzM0NjM2MX0.2o4QOo7QloklH4tVKOEmOcTRDYTCOrnBmUAngDn9LOc",
+  );
+
   runApp(const MyApp());
-}
-
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
-  // This widget is the root of your application.
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-      ),
-      home: const HomeScreen(),
-    );
-  }
 }
