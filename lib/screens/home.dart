@@ -177,9 +177,10 @@ class _HomeScreenState extends State<HomeScreen> {
         children: [
           Positioned.fill(
             child: Opacity(
-              opacity: 0.35, // lower opacity for faded effect
+              opacity: 0.1, // lower opacity for faded effect
               child: Image.network(
-                currentMovie.backdrop,
+                currentMovie.primaryImageUrl ??
+                    'https://via.placeholder.com/300x450?text=No+Image',
                 fit: BoxFit.fitHeight,
                 errorBuilder: (_, __, ___) => const Center(
                   child: Icon(Icons.broken_image, color: Colors.grey),
@@ -243,11 +244,13 @@ class _HomeScreenState extends State<HomeScreen> {
                 height: cardHeight,
                 child: CardSwiper(
                   scale: 0.93,
+
                   padding: const EdgeInsets.all(18),
                   // backCardOffset: const Offset.zero,
                   duration: const Duration(milliseconds: 400),
-                  numberOfCardsDisplayed: cardsToShow,
+                  numberOfCardsDisplayed: min(cardsToShow, _stack.length),
                   cardsCount: _stack.length,
+
                   cardBuilder: (context, index, percentX, percentY) {
                     // Cycle directions: right, left, down, up
                     final directions = [

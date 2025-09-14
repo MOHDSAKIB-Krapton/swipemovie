@@ -35,6 +35,7 @@ class OnBoarding extends StatelessWidget {
     return CupertinoApp(
       home: OnBoardingSlider(
         headerBackgroundColor: Colors.transparent,
+
         finishButtonText: 'Register',
         finishButtonStyle: const FinishButtonStyle(
           backgroundColor: Color(0xFFE50914),
