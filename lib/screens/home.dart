@@ -25,7 +25,7 @@ class _HomeScreenState extends State<HomeScreen> {
   final ValueNotifier<double> _activeStrength = ValueNotifier<double>(0.0);
 
   void _toggleFavorite(Movie movie) {
-    setState(() => movie.isFavorite = !movie.isFavorite);
+    // setState(() => movie.isFavorite = !movie.isFavorite);
   }
 
   @override
@@ -108,6 +108,11 @@ class _HomeScreenState extends State<HomeScreen> {
     final cardHeight = size.height * 0.55;
     const extra = 150.0; // for soft overflow of glow
 
+    // pick backdrop of the current top card
+    final Movie currentMovie = _stack.isNotEmpty
+        ? _stack[_frontIndex]
+        : movies.first;
+
     return Scaffold(
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(kToolbarHeight),
@@ -170,6 +175,19 @@ class _HomeScreenState extends State<HomeScreen> {
       backgroundColor: Colors.black,
       body: Stack(
         children: [
+          Positioned.fill(
+            child: Opacity(
+              opacity: 0.35, // lower opacity for faded effect
+              child: Image.network(
+                currentMovie.backdrop,
+                fit: BoxFit.fitHeight,
+                errorBuilder: (_, __, ___) => const Center(
+                  child: Icon(Icons.broken_image, color: Colors.grey),
+                ),
+              ),
+            ),
+          ),
+
           // bottom glow
           _reactiveGlow(
             myDir: CardSwiperDirection.bottom,
@@ -226,11 +244,19 @@ class _HomeScreenState extends State<HomeScreen> {
                 child: CardSwiper(
                   scale: 0.93,
                   padding: const EdgeInsets.all(18),
-                  backCardOffset: const Offset(0, 18),
+                  // backCardOffset: const Offset.zero,
                   duration: const Duration(milliseconds: 400),
                   numberOfCardsDisplayed: cardsToShow,
                   cardsCount: _stack.length,
                   cardBuilder: (context, index, percentX, percentY) {
+                    // Cycle directions: right, left, down, up
+                    final directions = [
+                      const Offset(30, 0), // → right
+                      const Offset(-30, 0), // ← left
+                      const Offset(0, 30), // ↓ down
+                      const Offset(0, -30), // ↑ up
+                    ];
+
                     // only top card updates direction
                     if (index == _frontIndex) {
                       final dir = _deriveDir(
@@ -246,11 +272,12 @@ class _HomeScreenState extends State<HomeScreen> {
                         _activeStrength.value = strength;
                       });
                     }
+
                     final movie = _stack[index];
-                    return Material(
-                      elevation: 8,
-                      borderRadius: BorderRadius.circular(20),
-                      clipBehavior: Clip.hardEdge,
+                    final offset = directions[index % directions.length];
+
+                    return Transform.translate(
+                      offset: offset,
                       child: MovieCard(
                         movie: movie,
                         onToggleFavorite: _toggleFavorite,

@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:swipemovie/screens/home.dart';
 import 'package:swipemovie/widgets/onboarding/slider.dart';
 import '../provider/auth_provider.dart';
-import '../screens/auth/login.dart';
-// import '../screens/home.dart';
 import 'package:provider/provider.dart';
 
 class MyApp extends StatelessWidget {
@@ -28,9 +27,9 @@ class AuthWrapper extends StatelessWidget {
     final authProvider = context.watch<AuthProvider>();
 
     if (authProvider.user == null) {
-      return const LoginScreen();
+      return const OnBoarding();
     }
 
-    return const OnBoarding();
+    return const HomeScreen();
   }
 }

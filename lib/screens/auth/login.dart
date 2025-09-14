@@ -1,56 +1,28 @@
 import 'package:flutter/material.dart';
+import 'package:swipemovie/screens/auth/signup.dart';
+import 'package:swipemovie/screens/home.dart';
+import 'package:swipemovie/widgets/common/input_field.dart';
+import 'package:swipemovie/widgets/common/primary_button.dart';
 import '../../provider/auth_provider.dart';
-import './signup.dart';
 import 'package:provider/provider.dart';
 
-class LoginScreen extends StatelessWidget {
+class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.black,
-      appBar: AppBar(
-        backgroundColor: Colors.black,
-        elevation: 0,
-        centerTitle: true,
-        title: const Text(
-          "Login",
-          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-        ),
-      ),
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 24.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: const [
-              SizedBox(height: 40),
-              _LoginForm(),
-              Spacer(),
-              _Footer(),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
+  State<LoginScreen> createState() => _LoginScreenState();
 }
 
-class _LoginForm extends StatefulWidget {
-  const _LoginForm();
-
-  @override
-  State<_LoginForm> createState() => _LoginFormState();
-}
-
-class _LoginFormState extends State<_LoginForm> {
+class _LoginScreenState extends State<LoginScreen> {
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
 
   bool _isLoading = false;
 
-  Future<void> _login(BuildContext context) async {
+  bool get isFormValid =>
+      emailController.text.isNotEmpty && passwordController.text.isNotEmpty;
+
+  Future<void> _login() async {
     final authProvider = Provider.of<AuthProvider>(context, listen: false);
 
     setState(() => _isLoading = true);
@@ -62,13 +34,16 @@ class _LoginFormState extends State<_LoginForm> {
       );
 
       if (!mounted) return;
+
       // optional: navigate to home if login succeeded
       if (authProvider.isLoggedIn) {
-        Navigator.pushReplacementNamed(context, '/');
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (_) => const HomeScreen()),
+        );
       }
     } catch (e) {
       if (!mounted) return;
-      // show error nicely
       ScaffoldMessenger.of(
         context,
       ).showSnackBar(SnackBar(content: Text(e.toString())));
@@ -83,90 +58,103 @@ class _LoginFormState extends State<_LoginForm> {
   void initState() {
     super.initState();
 
-    emailController.addListener(_onFormChanged);
-    passwordController.addListener(_onFormChanged);
+    emailController.addListener(() => setState(() {}));
+    passwordController.addListener(() => setState(() {}));
   }
 
-  void _onFormChanged() {
-    setState(() {}); // triggers rebuild so conditions re-evaluate
+  @override
+  void dispose() {
+    emailController.dispose();
+    passwordController.dispose();
+
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        TextField(
-          controller: emailController,
-          keyboardType: TextInputType.emailAddress,
-          decoration: InputDecoration(
-            hintText: "Email",
-            filled: true,
-            fillColor: Colors.grey[100],
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
-              borderSide: BorderSide.none,
-            ),
-            contentPadding: const EdgeInsets.symmetric(
-              horizontal: 16,
-              vertical: 14,
-            ),
-          ),
-        ),
-        const SizedBox(height: 16),
-        TextField(
-          controller: passwordController,
-          keyboardType: TextInputType.visiblePassword,
-          obscureText: true,
-          decoration: InputDecoration(
-            hintText: "Password",
-            filled: true,
-            fillColor: Colors.grey[100],
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
-              borderSide: BorderSide.none,
-            ),
-            contentPadding: const EdgeInsets.symmetric(
-              horizontal: 16,
-              vertical: 14,
-            ),
-          ),
-        ),
-        const SizedBox(height: 24),
-        SizedBox(
-          width: double.infinity,
-          height: 50,
-          child: ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.redAccent,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
+    return Scaffold(
+      extendBodyBehindAppBar: true,
+      backgroundColor: Colors.black,
+      resizeToAvoidBottomInset: false,
+      body: SafeArea(
+        child: Stack(
+          children: [
+            Opacity(
+              opacity: 0.1,
+              child: Image.asset(
+                "assets/images/onboarding/slide_3.jpeg",
+                fit: BoxFit.cover,
+                height: double.infinity,
+                width: double.infinity,
               ),
-              elevation: 2,
             ),
-            onPressed:
-                _isLoading ||
-                    emailController.text.trim().isEmpty ||
-                    passwordController.text.trim().isEmpty
-                ? null
-                : () => _login(context),
-            child: _isLoading
-                ? const SizedBox(
-                    height: 20,
-                    width: 20,
-                    child: CircularProgressIndicator(
-                      strokeWidth: 2,
-                      color: Colors.white,
-                    ),
-                  )
-                : const Text(
-                    "Login",
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
+
+            Positioned.fill(
+              child: Container(
+                decoration: const BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [
+                      Colors.black,
+                      Color(0x80E50914),
+                      Colors.transparent,
+                    ],
+                  ),
+                ),
+              ),
+            ),
+
+            Container(
+              padding: const EdgeInsets.only(left: 20, right: 20, top: 80),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Text(
+                    "Login To Your Account",
+                    style: const TextStyle(
+                      fontSize: 48,
+                      fontWeight: FontWeight.bold,
                       color: Colors.white,
                     ),
                   ),
-          ),
+
+                  const SizedBox(height: 40),
+                  _buildLoginForm(),
+                  _Footer(),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildLoginForm() {
+    return Column(
+      children: [
+        InputField(
+          controller: emailController,
+          hintText: "Email",
+          inputType: InputType.email,
+        ),
+
+        const SizedBox(height: 16),
+
+        InputField(
+          controller: passwordController,
+          hintText: "Password",
+          inputType: InputType.password,
+        ),
+
+        const SizedBox(height: 24),
+
+        PrimaryButton(
+          label: 'Login',
+          onTap: _login,
+          isLoading: _isLoading,
+          enabled: isFormValid,
         ),
       ],
     );
@@ -174,24 +162,32 @@ class _LoginFormState extends State<_LoginForm> {
 }
 
 class _Footer extends StatelessWidget {
-  const _Footer();
-
   @override
   Widget build(BuildContext context) {
     return Center(
       child: TextButton(
         onPressed: () {
-          Navigator.push(
+          Navigator.pushReplacement(
             context,
             MaterialPageRoute(builder: (_) => const SignupScreen()),
           );
         },
-        child: const Text(
-          "Create account",
-          style: TextStyle(
-            fontSize: 14,
-            color: Colors.redAccent,
-            fontWeight: FontWeight.w500,
+        child: RichText(
+          text: const TextSpan(
+            style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+            children: [
+              TextSpan(
+                text: "Dont't have an account? ",
+                style: TextStyle(color: Colors.white), // normal white text
+              ),
+              TextSpan(
+                text: "SignUp",
+                style: TextStyle(
+                  color: Color(0xFFE50914),
+                  decoration: TextDecoration.underline,
+                ), // red for "Login"
+              ),
+            ],
           ),
         ),
       ),

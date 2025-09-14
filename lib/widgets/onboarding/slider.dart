@@ -42,7 +42,7 @@ class OnBoarding extends StatelessWidget {
           elevation: 5,
         ),
         onFinish: () {
-          Navigator.pushReplacement(
+          Navigator.push(
             context,
             MaterialPageRoute(builder: (_) => const SignupScreen()),
           );

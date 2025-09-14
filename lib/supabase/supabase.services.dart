@@ -9,8 +9,12 @@ class SupabaseService {
   }
 
   // Sign up with email and password
-  Future<AuthResponse> signUp(String email, String password) {
-    return supabase.auth.signUp(email: email, password: password);
+  Future<AuthResponse> signUp(String email, String password, String fullName) {
+    return supabase.auth.signUp(
+      email: email,
+      password: password,
+      data: {'full_name': fullName},
+    );
   }
 
   // Logout

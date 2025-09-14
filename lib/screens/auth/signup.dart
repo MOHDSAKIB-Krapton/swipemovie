@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:swipemovie/widgets/common/input_field.dart';
+import 'package:swipemovie/widgets/common/primary_button.dart';
 import '../../provider/auth_provider.dart';
 import './login.dart';
 import 'package:provider/provider.dart';
@@ -13,20 +15,17 @@ class SignupScreen extends StatefulWidget {
 class _SignupScreenState extends State<SignupScreen> {
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
-  final confirmPasswordController = TextEditingController();
+  final nameController = TextEditingController();
 
   bool _isLoading = false;
 
+  bool get isFormValid =>
+      emailController.text.isNotEmpty &&
+      passwordController.text.isNotEmpty &&
+      nameController.text.isNotEmpty;
+
   Future<void> _signup() async {
     final authProvider = Provider.of<AuthProvider>(context, listen: false);
-
-    if (passwordController.text.trim() !=
-        confirmPasswordController.text.trim()) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text("Passwords do not match")));
-      return;
-    }
 
     setState(() => _isLoading = true);
 
@@ -34,6 +33,7 @@ class _SignupScreenState extends State<SignupScreen> {
       await authProvider.signup(
         emailController.text.trim(),
         passwordController.text.trim(),
+        nameController.text.trim(),
       );
 
       if (!mounted) return;
@@ -70,13 +70,17 @@ class _SignupScreenState extends State<SignupScreen> {
   void initState() {
     super.initState();
 
-    emailController.addListener(_onFormChanged);
-    passwordController.addListener(_onFormChanged);
-    confirmPasswordController.addListener(_onFormChanged);
+    emailController.addListener(() => setState(() {}));
+    passwordController.addListener(() => setState(() {}));
+    nameController.addListener(() => setState(() {}));
   }
 
-  void _onFormChanged() {
-    setState(() {}); // triggers rebuild so conditions re-evaluate
+  @override
+  void dispose() {
+    emailController.dispose();
+    passwordController.dispose();
+    nameController.dispose();
+    super.dispose();
   }
 
   @override
@@ -89,9 +93,9 @@ class _SignupScreenState extends State<SignupScreen> {
         child: Stack(
           children: [
             Opacity(
-              opacity: 0.1, // 👈 adjust to control visibility
+              opacity: 0.1,
               child: Image.asset(
-                "assets/images/onboarding/slide_3.jpeg", // replace with your image path
+                "assets/images/onboarding/slide_3.jpeg",
                 fit: BoxFit.cover,
                 height: double.infinity,
                 width: double.infinity,
@@ -143,75 +147,37 @@ class _SignupScreenState extends State<SignupScreen> {
   Widget _buildSignupForm() {
     return Column(
       children: [
-        TextField(
+        InputField(
+          controller: nameController,
+          hintText: "Full Name",
+          inputType: InputType.name,
+        ),
+
+        const SizedBox(height: 16),
+
+        InputField(
           controller: emailController,
-          keyboardType: TextInputType.emailAddress,
-          cursorColor: const Color(0xFFE50914),
-          decoration: _inputDecoration("Email"),
+          hintText: "Email",
+          inputType: InputType.email,
         ),
+
         const SizedBox(height: 16),
-        TextField(
+
+        InputField(
           controller: passwordController,
-          obscureText: true,
-          cursorColor: const Color(0xFFE50914),
-          decoration: _inputDecoration("Password"),
+          hintText: "Password",
+          inputType: InputType.password,
         ),
-        const SizedBox(height: 16),
-        TextField(
-          controller: confirmPasswordController,
-          obscureText: true,
-          cursorColor: const Color(0xFFE50914),
-          decoration: _inputDecoration("Confirm Password"),
-        ),
+
         const SizedBox(height: 24),
-        SizedBox(
-          width: double.infinity,
-          height: 50,
-          child: ElevatedButton(
-            style: ButtonStyle(
-              backgroundColor: MaterialStateProperty.all(Color(0xFFE50914)),
-            ),
-            onPressed:
-                _isLoading ||
-                    emailController.text.trim().isEmpty ||
-                    passwordController.text.trim().isEmpty ||
-                    confirmPasswordController.text.trim().isEmpty
-                ? null
-                : _signup,
-            child: _isLoading
-                ? const SizedBox(
-                    height: 20,
-                    width: 20,
-                    child: CircularProgressIndicator(
-                      strokeWidth: 2,
-                      color: Colors.redAccent,
-                    ),
-                  )
-                : const Text(
-                    "Sign Up",
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                      color: Colors.white,
-                    ),
-                  ),
-          ),
+
+        PrimaryButton(
+          label: 'Submit',
+          onTap: _signup,
+          isLoading: _isLoading,
+          enabled: isFormValid,
         ),
       ],
-    );
-  }
-
-  InputDecoration _inputDecoration(String hint) {
-    return InputDecoration(
-      hintText: hint,
-      hintStyle: TextStyle(color: Colors.grey[400]),
-      filled: true,
-      fillColor: Colors.grey[800],
-      border: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(12),
-        borderSide: BorderSide.none,
-      ),
-      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
     );
   }
 }
@@ -222,7 +188,7 @@ class _Footer extends StatelessWidget {
     return Center(
       child: TextButton(
         onPressed: () {
-          Navigator.push(
+          Navigator.pushReplacement(
             context,
             MaterialPageRoute(builder: (_) => const LoginScreen()),
           );
@@ -238,7 +204,7 @@ class _Footer extends StatelessWidget {
               TextSpan(
                 text: "Login",
                 style: TextStyle(
-                  color: Colors.redAccent,
+                  color: Color(0xFFE50914),
                   decoration: TextDecoration.underline,
                 ), // red for "Login"
               ),

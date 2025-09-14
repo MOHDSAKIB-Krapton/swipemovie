@@ -30,8 +30,8 @@ class AuthProvider with ChangeNotifier {
     await _supabaseService.signIn(email, password);
   }
 
-  Future<void> signup(String email, String password) async {
-    await _supabaseService.signUp(email, password);
+  Future<void> signup(String email, String password, String fullName) async {
+    await _supabaseService.signUp(email, password, fullName);
   }
 
   Future<void> logout() async {
