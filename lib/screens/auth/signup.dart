@@ -48,12 +48,6 @@ class _SignupScreenState extends State<SignupScreen> {
           duration: Duration(seconds: 4),
         ),
       );
-
-      // Navigate to the login screen so the user can log in after verification.
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (_) => const LoginScreen()),
-      );
     } catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(

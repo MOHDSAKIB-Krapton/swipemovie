@@ -2,7 +2,6 @@ import 'dart:math';
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_card_swiper/flutter_card_swiper.dart';
-import 'package:swipemovie/screens/profile.dart';
 import '../data/movie_data.dart';
 import '../models/movie.dart';
 import '../widgets/movie_card.dart';
@@ -153,12 +152,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       IconButton(
                         icon: const Icon(Icons.person, color: Colors.white),
                         onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (_) => const ProfileScreen(),
-                            ),
-                          );
+                          Navigator.pushNamed(context, '/profile');
                         },
                       ),
                       const SizedBox(width: 8), // small right padding

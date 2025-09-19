@@ -1,27 +1,43 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:swipemovie/screens/auth/login.dart';
+import 'package:swipemovie/widgets/common/primary_button.dart';
 import '../../provider/auth_provider.dart'; // your own provider
 
-class ProfileScreen extends StatelessWidget {
+class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
+
+  @override
+  State<ProfileScreen> createState() => _ProfileScreenState();
+}
+
+class _ProfileScreenState extends State<ProfileScreen> {
+  bool loading = false;
+
+  Future<void> logout() async {
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+    setState(() => loading = true);
+
+    try {
+      await authProvider.logout();
+    } catch (e) {
+      if (!mounted) return;
+
+      setState(() => loading = false);
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(e.toString())));
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     final authProvider = Provider.of<AuthProvider>(context, listen: false);
-    // final size = MediaQuery.of(context).size;
 
     final user = authProvider.user;
     final fullName = user?.userMetadata?['full_name'] ?? 'Guest';
     final avatarUrl = user?.userMetadata?['avatar_url'] as String?;
-
-    late bool isLoading = false;
-
-    void logout() async {
-      isLoading = true;
-      // Since this is a stateless widget, we use a simple setState workaround
-      await authProvider.logout();
-    }
 
     return Scaffold(
       extendBodyBehindAppBar: true,
@@ -159,35 +175,11 @@ class ProfileScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 24),
 
-                  // --- Logout button ---
-                  SizedBox(
-                    width: double.infinity,
-                    child: ElevatedButton.icon(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.redAccent,
-                        padding: const EdgeInsets.symmetric(vertical: 14),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                      ),
-                      icon: const Icon(Icons.logout),
-                      label: isLoading
-                          ? const Text(
-                              'Logging out...',
-                              style: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            )
-                          : const Text(
-                              'Logout',
-                              style: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                      onPressed: logout,
-                    ),
+                  PrimaryButton(
+                    onTap: logout,
+                    label: 'Logout',
+                    isLoading: loading,
+                    icon: Icons.logout,
                   ),
                 ],
               ),

@@ -1,4 +1,3 @@
-// auth_wrapper.dart
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -17,8 +16,8 @@ class _AuthWrapperState extends State<AuthWrapper> {
   late final Stream<AuthState> _authStateChanges;
 
   @override
-  void initState() {
-    super.initState();
+  void didChangeDependencies() {
+    super.didChangeDependencies();
     final authProvider = Provider.of<AuthProvider>(context, listen: false);
     _authStateChanges = authProvider.authStateChanges;
   }
@@ -32,17 +31,23 @@ class _AuthWrapperState extends State<AuthWrapper> {
         // You can show a loading indicator while waiting for the first snapshot
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Scaffold(
-            body: Center(child: CircularProgressIndicator()),
+            body: Center(child: CircularProgressIndicator(color: Colors.red)),
           );
         }
 
         final user = snapshot.data?.session?.user;
 
+        print(
+          'Auth state changed: ${snapshot.data?.event}, User: ${user?.id}',
+        ); // Debug
+
         if (user == null) {
           // User is not logged in, show the login screen
+          print("➡ Going to LoginScreen");
           return const LoginScreen();
         } else {
           // User is logged in, show the home screen
+          print("➡ Going to HomeScreen");
           return const HomeScreen();
         }
       },

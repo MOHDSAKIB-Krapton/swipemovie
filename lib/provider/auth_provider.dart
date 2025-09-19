@@ -1,5 +1,3 @@
-// auth_provider.dart
-
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../supabase/supabase.services.dart';
@@ -32,6 +30,11 @@ class AuthProvider with ChangeNotifier {
 
   Future<void> signup(String email, String password, String fullName) async {
     await _supabaseService.signUp(email, password, fullName);
+  }
+
+  Future<void> signInWithGoogle() async {
+    // await _supabaseService.signInWithGoogle();
+    await _supabaseService.nativeGoogleSignIn();
   }
 
   Future<void> logout() async {

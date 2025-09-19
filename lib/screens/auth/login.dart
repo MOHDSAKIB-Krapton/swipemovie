@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:swipemovie/screens/auth/signup.dart';
-import 'package:swipemovie/screens/home.dart';
+import 'package:swipemovie/widgets/auth/auth_providers.dart';
 import 'package:swipemovie/widgets/common/input_field.dart';
 import 'package:swipemovie/widgets/common/primary_button.dart';
 import '../../provider/auth_provider.dart';
@@ -32,16 +32,6 @@ class _LoginScreenState extends State<LoginScreen> {
         emailController.text.trim(),
         passwordController.text.trim(),
       );
-
-      if (!mounted) return;
-
-      // optional: navigate to home if login succeeded
-      if (authProvider.isLoggedIn) {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (_) => const HomeScreen()),
-        );
-      }
     } catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(
@@ -121,6 +111,10 @@ class _LoginScreenState extends State<LoginScreen> {
 
                   const SizedBox(height: 40),
                   _buildLoginForm(),
+
+                  const SizedBox(height: 20),
+
+                  AuthProviders(),
                   _Footer(),
                 ],
               ),
