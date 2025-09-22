@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:swipemovie/screens/auth/login.dart';
 import 'package:swipemovie/screens/auth/signup.dart';
 import 'package:swipemovie/screens/home.dart';
-import 'package:swipemovie/screens/movie_detail.dart';
 import 'package:swipemovie/screens/profile.dart';
 import 'package:swipemovie/widgets/auth/auth_wrapper.dart';
 import '../provider/auth_provider.dart';

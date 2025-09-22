@@ -177,7 +177,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     'https://via.placeholder.com/300x450?text=No+Image',
                 fit: BoxFit.fitHeight,
                 errorBuilder: (_, __, ___) => const Center(
-                  child: Icon(Icons.broken_image, color: Colors.grey),
+                  child: Icon(Icons.broken_image, color: Colors.black),
                 ),
               ),
             ),
@@ -248,8 +248,8 @@ class _HomeScreenState extends State<HomeScreen> {
                   cardBuilder: (context, index, percentX, percentY) {
                     // Cycle directions: right, left, down, up
                     final directions = [
-                      const Offset(30, 0), // → right
-                      const Offset(-30, 0), // ← left
+                      const Offset(-30, 0), // → right
+                      const Offset(30, 0), // ← left
                       const Offset(0, 30), // ↓ down
                       const Offset(0, -30), // ↑ up
                     ];

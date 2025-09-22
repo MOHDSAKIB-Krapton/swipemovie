@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import '../supabase/supabase.services.dart';
+import '../services/supabase.services.dart';
 
 class AuthProvider with ChangeNotifier {
   final SupabaseService _supabaseService = SupabaseService();

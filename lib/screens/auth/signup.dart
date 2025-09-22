@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:swipemovie/widgets/common/input_field.dart';
 import 'package:swipemovie/widgets/common/primary_button.dart';
 import '../../provider/auth_provider.dart';
-import './login.dart';
 import 'package:provider/provider.dart';
 
 class SignupScreen extends StatefulWidget {
@@ -182,10 +181,7 @@ class _Footer extends StatelessWidget {
     return Center(
       child: TextButton(
         onPressed: () {
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(builder: (_) => const LoginScreen()),
-          );
+          Navigator.pushReplacementNamed(context, '/login');
         },
         child: RichText(
           text: const TextSpan(
